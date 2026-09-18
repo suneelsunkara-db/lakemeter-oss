@@ -135,7 +135,9 @@ if [ "$WORKSPACE_DEPLOY" = true ]; then
     # Top-level config
     (
         for f in app.yaml requirements.txt; do
-            [ -f "$f" ] && databricks workspace import ${PROFILE_FLAG} --file "$f" "${WS_PATH}/$f" --overwrite 2>/dev/null || true
+            # --format RAW is required for non-source files (yaml/txt); without it
+            # the import silently fails and the workspace keeps a stale app.yaml.
+            [ -f "$f" ] && databricks workspace import "${WS_PATH}/$f" ${PROFILE_FLAG} --file "$f" --format RAW --overwrite || true
         done
     ) &
     PID_CFG=$!
