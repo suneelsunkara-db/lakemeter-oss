@@ -24,7 +24,7 @@ env:
   - name: "LAKEBASE_ENDPOINT"
     value: "projects/lakemeter-customer/branches/production/endpoints/primary"
   - name: "DB_HOST"
-    value: "ep-spring-cherry-d81pnq1c.database.us-east-2.cloud.databricks.com"
+    valueFrom: "lm-db-host"
   - name: "DB_USER"
     value: "098f898b-8e8a-4dfc-a7e7-85b30c60ba89"
   - name: "DB_NAME"
