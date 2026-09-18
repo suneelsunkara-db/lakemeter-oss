@@ -1,5 +1,15 @@
 # Databricks App Configuration
-# Lakebase: Autoscaling project "lakemeter-customer" (production / primary)
+#
+# Reusable template. No workspace hostnames or the app's service-principal id
+# are stored in this file:
+#   - DATABRICKS_HOST : auto-injected by Databricks Apps at runtime (do not set).
+#   - DB_USER         : defaults to the app's service-principal identity
+#                       (token_manager resolves it), so it is not hardcoded.
+#   - DB_HOST         : read from a Databricks secret via valueFrom (lm-db-host
+#                       -> scope "lakemeter-secrets", key "lakebase-host").
+#
+# To reuse this app on another workspace/Lakebase, edit ONLY the values in the
+# "Workspace-specific settings" block below and set the lm-db-host secret.
 
 command:
   - "/bin/bash"
@@ -8,25 +18,26 @@ command:
     cd backend && ../.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port ${DATABRICKS_APP_PORT:-8000}
 
 env:
-  # App environment
+  # --- App environment (usually unchanged) ---
   - name: "ENVIRONMENT"
     value: "production"
   - name: "CORS_ORIGINS"
     value: ""
-  - name: "DATABRICKS_HOST"
-    value: "https://dbc-73d32922-ac91.cloud.databricks.com"
 
-  # Lakebase Autoscaling database configuration (project: lakemeter-customer)
+  # --- Masked / auto-resolved: do NOT hardcode these ---
+  # DATABRICKS_HOST -> auto-injected by Databricks Apps
+  # DB_USER         -> defaults to the app service-principal identity
+  # DB_HOST         -> pulled from secret (lakemeter-secrets:lakebase-host)
+  - name: "DB_HOST"
+    valueFrom: "lm-db-host"
+
+  # --- Workspace-specific settings (edit these to reuse elsewhere) ---
   - name: "LAKEBASE_PROJECT"
     value: "lakemeter-customer"
   - name: "LAKEBASE_BRANCH"
     value: "production"
   - name: "LAKEBASE_ENDPOINT"
     value: "projects/lakemeter-customer/branches/production/endpoints/primary"
-  - name: "DB_HOST"
-    valueFrom: "lm-db-host"
-  - name: "DB_USER"
-    value: "098f898b-8e8a-4dfc-a7e7-85b30c60ba89"
   - name: "DB_NAME"
     value: "lakemeter_pricing"
   - name: "DB_PORT"
@@ -34,6 +45,6 @@ env:
   - name: "DB_SSLMODE"
     value: "require"
 
-  # AI Assistant model serving endpoint
+  # AI Assistant model serving endpoint (Databricks Foundation Model)
   - name: "CLAUDE_MODEL_ENDPOINT"
     value: "databricks-qwen3-next-80b-a3b-instruct"
