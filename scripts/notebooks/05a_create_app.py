@@ -13,7 +13,7 @@ dbutils.widgets.text("project_id", "lakemeter-customer")
 dbutils.widgets.text("db_name", "lakemeter_pricing")
 dbutils.widgets.text("app_name", "lakemeter")
 dbutils.widgets.text("secrets_scope", "lakemeter-secrets")
-dbutils.widgets.text("claude_endpoint", "databricks-claude-opus-4-6")
+dbutils.widgets.text("claude_endpoint", "databricks-qwen3-next-80b-a3b-instruct")
 
 project_id = dbutils.widgets.get("project_id")
 db_name = dbutils.widgets.get("db_name")

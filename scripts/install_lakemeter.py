@@ -37,7 +37,7 @@ PRICING_DIR = BACKEND_DIR / "static" / "pricing"
 
 DEFAULT_DB_NAME = "lakemeter_pricing"
 DEFAULT_SCHEMA = "lakemeter"
-DEFAULT_CLAUDE_ENDPOINT = "databricks-claude-opus-4-6"
+DEFAULT_CLAUDE_ENDPOINT = "databricks-qwen3-next-80b-a3b-instruct"
 DEFAULT_NODE_COUNT = 1
 
 # Secrets required for API pricing mode
@@ -1436,7 +1436,7 @@ def configure_app_resources(ctx: dict, instance_info: dict, cfg: dict):
         })
 
     # 4. Add serving endpoint resource for AI Assistant (Claude)
-    claude_endpoint = cfg.get("claude_endpoint", "databricks-claude-opus-4-6")
+    claude_endpoint = cfg.get("claude_endpoint", "databricks-qwen3-next-80b-a3b-instruct")
     resources.append({
         "name": f"{app_name}-claude-endpoint",
         "description": "Claude model endpoint for AI Assistant",

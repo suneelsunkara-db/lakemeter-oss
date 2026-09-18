@@ -29,7 +29,7 @@ from app.config import log_info, log_warning, log_error
 _raw_host = os.getenv("DATABRICKS_HOST", "")
 # Ensure DATABRICKS_HOST always has https:// protocol (Databricks Apps runtime may omit it)
 DATABRICKS_HOST = (_raw_host if _raw_host.startswith("http") else f"https://{_raw_host}") if _raw_host else ""
-MODEL_ENDPOINT = os.getenv("CLAUDE_MODEL_ENDPOINT", "databricks-claude-opus-4-6")
+MODEL_ENDPOINT = os.getenv("CLAUDE_MODEL_ENDPOINT", "databricks-qwen3-next-80b-a3b-instruct")
 CLAUDE_ENDPOINT = f"{DATABRICKS_HOST}/serving-endpoints/{MODEL_ENDPOINT}/invocations" if DATABRICKS_HOST else ""
 
 # Rate limiting configuration
@@ -56,7 +56,9 @@ class ClaudeAIClient:
     Client for Databricks-hosted Claude models.
     
     Uses OpenAI-compatible chat completions format.
-    Supports multiple models: databricks-claude-opus-4-6, databricks-claude-sonnet-4-6
+    Works with any Databricks Foundation Model serving endpoint; the endpoint
+    name comes from CLAUDE_MODEL_ENDPOINT (e.g.
+    databricks-qwen3-next-80b-a3b-instruct on Free Edition).
     """
     
     def __init__(self, token: Optional[str] = None, model: Optional[str] = None):
@@ -517,6 +519,11 @@ class ClaudeAIClient:
         return result
 
 
-def get_claude_client(token: str, model: str = "databricks-claude-opus-4-6") -> ClaudeAIClient:
-    """Get a Claude client instance with the given token."""
+def get_claude_client(token: str, model: Optional[str] = None) -> ClaudeAIClient:
+    """Get a model serving client instance with the given token.
+
+    When ``model`` is None the client falls back to MODEL_ENDPOINT, which is
+    driven by the CLAUDE_MODEL_ENDPOINT env var (set via app.yaml). This keeps
+    the model endpoint configurable without hardcoding it in code.
+    """
     return ClaudeAIClient(token=token, model=model)

@@ -3849,6 +3849,13 @@ Each workload needs to be confirmed individually. Review the configurations and 
 
 
 def create_agent(token: str, mode: str = "estimate") -> EstimateAgent:
-    """Create a new agent instance with the given token and mode."""
-    client = get_claude_client(token, model="databricks-claude-opus-4-5")
+    """Create a new agent instance with the given token and mode.
+
+    The model endpoint is not hardcoded here; it comes from the
+    CLAUDE_MODEL_ENDPOINT env var (via MODEL_ENDPOINT in ai_client), so the
+    model can be swapped without code changes. This avoids the 404
+    ENDPOINT_NOT_FOUND error on workspaces where a hardcoded endpoint (e.g.
+    databricks-claude-opus-4-5) is not available, such as Free Edition.
+    """
+    client = get_claude_client(token)
     return EstimateAgent(client, mode=mode)

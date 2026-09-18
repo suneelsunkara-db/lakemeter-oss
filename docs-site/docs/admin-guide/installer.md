@@ -89,7 +89,7 @@ Configuration:
   Database:       lakemeter_pricing
   App name:       lakemeter
   Secrets scope:  lakemeter-secrets
-  Claude endpoint: databricks-claude-opus-4-6
+  Claude endpoint: databricks-qwen3-next-80b-a3b-instruct
 ```
 
 ### Phase 2: Bundle Deploy
@@ -196,7 +196,7 @@ The following are fixed (not user-configurable):
 | Setting | Value | Reason |
 |---------|-------|--------|
 | Lakebase scaling | 1–16 CU, scale-to-zero | Optimal for cost and performance |
-| Claude endpoint | `databricks-claude-opus-4-6` | Same endpoint on every Databricks workspace |
+| Claude endpoint | `databricks-qwen3-next-80b-a3b-instruct` | Foundation Model endpoint available on every workspace, including Free Edition |
 | Serverless environment | v5 | Latest serverless environment version |
 
 ## What Gets Created

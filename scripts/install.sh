@@ -30,7 +30,7 @@ PROJECT_ID="lakemeter-customer"
 DB_NAME="lakemeter_pricing"
 APP_NAME="lakemeter"
 SECRETS_SCOPE="lakemeter-secrets"
-CLAUDE_ENDPOINT="databricks-claude-opus-4-6"
+CLAUDE_ENDPOINT="databricks-qwen3-next-80b-a3b-instruct"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do

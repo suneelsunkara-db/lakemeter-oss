@@ -28,7 +28,7 @@ resources:
         - name: secrets_scope
           default: "lakemeter-secrets"
         - name: claude_endpoint
-          default: "databricks-claude-opus-4-6"
+          default: "databricks-qwen3-next-80b-a3b-instruct"
 
       # Task dependency graph (parallel where possible):
       #

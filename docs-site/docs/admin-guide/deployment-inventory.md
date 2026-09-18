@@ -79,7 +79,7 @@ These environment variables are injected into the app container at runtime:
 | `lm-db-host` | `DB_HOST` | Secret | `lakemeter-secrets:lakebase-host` |
 | `lm-db-user` | `DB_USER` | Secret | `lakemeter-secrets:lakebase-user` |
 | `lm-db-name` | `DB_NAME` | Secret | `lakemeter-secrets:lakebase-database` |
-| `lm-claude-endpoint` | `CLAUDE_MODEL_ENDPOINT` | Serving Endpoint | `databricks-claude-opus-4-6` |
+| `lm-claude-endpoint` | `CLAUDE_MODEL_ENDPOINT` | Serving Endpoint | `databricks-qwen3-next-80b-a3b-instruct` |
 
 ### Service Principal
 
@@ -90,7 +90,7 @@ The app gets an auto-created Service Principal with:
 | Lakebase OAuth role | `production` branch | Authenticates the app Service Principal |
 | SQL grants | `lakemeter` schema | CONNECT, USAGE, ALL PRIVILEGES on tables/sequences/functions |
 | Secret READ | `lakemeter-secrets` scope | Read database credentials |
-| CAN_QUERY | `databricks-claude-opus-4-6` | Query the Claude model endpoint |
+| CAN_QUERY | `databricks-qwen3-next-80b-a3b-instruct` | Query the AI assistant model endpoint |
 
 ---
 

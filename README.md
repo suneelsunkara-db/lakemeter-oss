@@ -12,6 +12,14 @@ Lakemeter is an open-source cost estimation and workload sizing tool that runs a
 
 ![Lakemeter cost summary showing workload costs and detailed breakdowns](docs-site/static/img/gifs/cost-summary.gif)
 
+## Fork notes (suneelsunkara-db)
+
+This fork tracks upstream [databrickslabs/lakemeter-oss](https://github.com/databrickslabs/lakemeter-oss) and adds a few changes so the AI assistant works on **Databricks Free Edition**:
+
+- **2026-07-27 — Free Edition AI model.** The AI assistant model endpoint defaults to `databricks-qwen3-next-80b-a3b-instruct` (a Foundation Model endpoint available on Free Edition) instead of a Claude endpoint that isn't provisioned there. The endpoint remains configurable via the `CLAUDE_MODEL_ENDPOINT` env var / installer `claude_endpoint` parameter.
+- **2026-07-27 — Removed hardcoded model in the agent.** `create_agent()` no longer hardcodes a Claude endpoint; it uses the configured `CLAUDE_MODEL_ENDPOINT`, fixing `404 ENDPOINT_NOT_FOUND` on workspaces where that endpoint doesn't exist.
+- **2026-09-18 — Re-synced with upstream.** Rebased the fork onto the latest upstream `main` (which already prefers the app service principal token for model serving) and kept only the Free Edition model changes above to avoid duplicating upstream fixes.
+
 ## What you can estimate
 
 **Compute and SQL**
