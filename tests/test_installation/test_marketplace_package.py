@@ -46,6 +46,19 @@ def test_marketplace_app_config_is_workspace_neutral():
     assert "../.venv" not in command
 
 
+def test_marketplace_requirements_include_psycopg3():
+    """SQLAlchemy 2.1 defaults to psycopg 3; Marketplace installs must ship it."""
+    required = "psycopg[binary]"
+    for path in (
+        ROOT / "requirements.txt",
+        BACKEND / "requirements.txt",
+        ROOT / "scripts/app_source/requirements.txt",
+    ):
+        text = path.read_text()
+        assert required in text, f"{path} must declare {required}"
+        assert "sqlalchemy>=" in text
+
+
 def test_marketplace_bootstrap_assets_are_self_contained():
     schema = (BACKEND / "app/bootstrap/sql/schema.sql").read_text()
     functions = (BACKEND / "app/bootstrap/sql/functions.sql").read_text()
@@ -185,6 +198,63 @@ def test_marketplace_bootstrap_skips_current_database(monkeypatch):
     assert runner.bootstrap_database(engine) is False
     assert applied == ["schema.sql"]
     assert engine.connection.rollbacks == 0
+
+
+class _CopyStream:
+    def __init__(self):
+        self.chunks = []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return None
+
+    def write(self, data):
+        self.chunks.append(data)
+
+
+class _Psycopg3Cursor:
+    def __init__(self):
+        self.copy_calls = []
+
+    def copy(self, sql):
+        stream = _CopyStream()
+        self.copy_calls.append((sql, stream))
+        return stream
+
+
+class _Psycopg2Cursor:
+    def __init__(self):
+        self.copy_calls = []
+
+    def copy_expert(self, sql, handle):
+        self.copy_calls.append((sql, handle.read()))
+
+
+def test_copy_csv_uses_psycopg3_copy_when_copy_expert_is_missing():
+    from app.bootstrap import runner
+    from io import StringIO
+
+    cursor = _Psycopg3Cursor()
+    handle = StringIO("cloud,tier\naws,premium\n")
+    runner._copy_csv(cursor, "COPY t FROM STDIN", handle)
+
+    assert len(cursor.copy_calls) == 1
+    sql, stream = cursor.copy_calls[0]
+    assert sql == "COPY t FROM STDIN"
+    assert "".join(stream.chunks) == "cloud,tier\naws,premium\n"
+
+
+def test_copy_csv_uses_psycopg2_copy_expert_when_available():
+    from app.bootstrap import runner
+    from io import StringIO
+
+    cursor = _Psycopg2Cursor()
+    handle = StringIO("cloud,tier\naws,premium\n")
+    runner._copy_csv(cursor, "COPY t FROM STDIN", handle)
+
+    assert cursor.copy_calls == [("COPY t FROM STDIN", "cloud,tier\naws,premium\n")]
 
 
 def test_marketplace_bootstrap_initializes_empty_database(monkeypatch):
